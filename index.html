@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>숫자 맞추기 게임</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .game-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        .input-section {
+            margin-bottom: 1.5rem;
+        }
+        input[type="number"] {
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 100px;
+            margin-right: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .stats {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>숫자 맞추기 게임</h1>
+        <p>1부터 100 사이의 숫자를 맞춰보세요!</p>
+        <div class="input-section">
+            <input type="number" id="guess" min="1" max="100">
+            <button onclick="checkGuess()">확인</button>
+        </div>
+        <div class="message" id="message">게임을 시작합니다!</div>
+        <div class="stats">
+            <p>시도 횟수: <span id="attempts">0</span></p>
+            <p>최고 기록: <span id="bestScore">없음</span></p>
+        </div>
+        <button onclick="newGame()">새 게임</button>
+    </div>
+
+    <script>
+        let targetNumber;
+        let attempts;
+        let bestScore = null;
+        let gameOver = false;
+
+        function initGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            gameOver = false;
+            document.getElementById('message').textContent = '게임을 시작합니다!';
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('guess').value = '';
+            document.getElementById('guess').focus();
+        }
+
+        function checkGuess() {
+            if (gameOver) {
+                return;
+            }
+
+            const guessInput = document.getElementById('guess');
+            const guess = parseInt(guessInput.value);
+            
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                document.getElementById('message').textContent = '1부터 100 사이의 숫자를 입력해주세요!';
+                return;
+            }
+
+            attempts++;
+            document.getElementById('attempts').textContent = attempts;
+
+            if (guess === targetNumber) {
+                gameOver = true;
+                document.getElementById('message').textContent = `정답입니다! ${attempts}번 만에 맞추셨습니다!`;
+                
+                if (bestScore === null || attempts < bestScore) {
+                    bestScore = attempts;
+                    document.getElementById('bestScore').textContent = bestScore;
+                }
+            } else if (guess < targetNumber) {
+                document.getElementById('message').textContent = '더 높은 숫자입니다!';
+            } else {
+                document.getElementById('message').textContent = '더 낮은 숫자입니다!';
+            }
+
+            guessInput.value = '';
+            guessInput.focus();
+        }
+
+        function newGame() {
+            initGame();
+        }
+
+        // 엔터 키 입력 처리
+        document.getElementById('guess').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+
+        // 게임 초기화
+        initGame();
+    </script>
+</body>
+</html>
